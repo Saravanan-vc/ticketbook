@@ -1,11 +1,20 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hive/hive.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+late Box box;
 
 class AuthenProvider extends ChangeNotifier {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
   String collectionpath = "userDetails";
+  String? userName;
+  late String usrName;
 
   // login screen
   TextEditingController mailcontroller = TextEditingController();
@@ -21,29 +30,39 @@ class AuthenProvider extends ChangeNotifier {
         _firebaseAuth
             .signInWithEmailAndPassword(email: email, password: password)
             .then((_) {
-              getUser(email);
-            })
-            .then((_) => call())
-            .then((_) => clearLogin());
+          getUser(email);
+        }).then(
+          (_) {
+            if (userName == null || userName!.isEmpty) {
+              Future.delayed(const Duration(seconds: 10));
+            }
+            call();
+          },
+        ).then((_) => clearLogin());
       } catch (e) {
-        debugPrint("$e");
+        if (kDebugMode) debugPrint("$e");
       }
     } else {
-      debugPrint('Enter eamil and password');
+      if (kDebugMode) debugPrint('Enter eamil and password');
     }
   }
 
   Future<void> getUser(String email) async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     try {
       QuerySnapshot querySnapshot =
           await _firebaseFirestore.collection(collectionpath).get();
       for (var doc in querySnapshot.docs) {
         if (email == doc['email']) {
-          debugPrint(doc['name']);
+          userName = doc['name'];
+          box.put(01, userName);
+          sharedPreferences.setBool("check", true);
+          notifyListeners();
+          break;
         }
       }
     } catch (e) {
-      debugPrint('Error retrieving user: $e');
+      if (kDebugMode) debugPrint('Error retrieving user: $e');
     }
   }
 
@@ -72,7 +91,13 @@ class AuthenProvider extends ChangeNotifier {
       clearSign();
       callit();
     } catch (e) {
-      debugPrint("$e");
+      if (kDebugMode) debugPrint("$e");
     }
+  }
+
+  // geting usename
+  void getusename(dynamic a) {
+    usrName = box.get(a);
+    notifyListeners();
   }
 }
