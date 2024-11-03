@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ticketbook/model_view/api_provider.dart';
 import 'package:ticketbook/model_view/login_provider.dart';
 import 'package:ticketbook/ui/color.dart';
 import 'package:ticketbook/view/home_view.dart';
@@ -17,7 +18,8 @@ Future<void> main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => AuthenProvider())
+        ChangeNotifierProvider(create: (context) => AuthenProvider()),
+        ChangeNotifierProvider(create: (context) => ApiProvider())
       ],
       child: const MyApp(),
     ),
@@ -33,7 +35,9 @@ class MyApp extends StatelessWidget {
       designSize: const Size(360, 690),
       builder: (_, child) {
         return MaterialApp(
-            theme: ThemeData(scaffoldBackgroundColor: ColorClass.palWhite),
+            theme: ThemeData(
+                scaffoldBackgroundColor: ColorClass.palWhite,
+                appBarTheme: AppBarTheme(color: ColorClass.palWhite)),
             home: const SplashScreen());
       },
     );
@@ -50,6 +54,7 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
+    Provider.of<ApiProvider>(context, listen: false).gettinData();
     sharedpreferencescheck(context);
     super.initState();
   }

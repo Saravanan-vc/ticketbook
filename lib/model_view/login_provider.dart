@@ -54,7 +54,8 @@ class AuthenProvider extends ChangeNotifier {
           await _firebaseFirestore.collection(collectionpath).get();
       for (var doc in querySnapshot.docs) {
         if (email == doc['email']) {
-          userName = doc['name'];
+          userName = capitalizeFirstletter(doc['name']);
+          notifyListeners();
           box.put(01, userName);
           sharedPreferences.setBool("check", true);
           notifyListeners();
@@ -88,6 +89,15 @@ class AuthenProvider extends ChangeNotifier {
         "name": name,
         "email": email,
       });
+      //nested data base setting
+
+      // await _firebaseFirestore
+      //     .collection(collectionpath)
+      //     .doc("${userCredential.user?.uid}")
+      //   ..set({"name": name, "email": email, "innerwork": "finaly did it"})
+      //   ..collection("data")
+      //       .doc(name)
+      //       .set({"name": name, "email": email, "innerwork": "finaly did it"});
       clearSign();
       callit();
     } catch (e) {
@@ -99,5 +109,13 @@ class AuthenProvider extends ChangeNotifier {
   void getusename(dynamic a) {
     usrName = box.get(a);
     notifyListeners();
+  }
+
+  //first leter upercase
+  String capitalizeFirstletter(String input) {
+    if (input.isEmpty) {
+      return "";
+    }
+    return input[0].toUpperCase() + input.substring(1);
   }
 }
