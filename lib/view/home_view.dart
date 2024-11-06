@@ -88,10 +88,12 @@ class _HomeViewState extends State<HomeView> {
                     child: ListView.builder(
                       itemBuilder: (context, index) {
                         return GestureDetector(
-                          onTap: () => Navigator.of(context).push(
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      DetailFlight(index: index))),
+                          onTap: () {
+                            apiprovider.forindeX(index);
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) =>
+                                    DetailFlight(index: index)));
+                          },
                           child: CardWidgets(
                             origin:
                                 "${apiprovider.flightlist[index].departure?.city}",

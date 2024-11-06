@@ -118,4 +118,8 @@ class AuthenProvider extends ChangeNotifier {
     }
     return input[0].toUpperCase() + input.substring(1);
   }
+
+  Stream getdata() {
+    return _firebaseFirestore.collection(collectionpath).doc("${_firebaseAuth.currentUser?.uid}").collection("purachedTicket").snapshots();
+  }
 }

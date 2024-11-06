@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -6,6 +7,7 @@ import 'package:ticketbook/model_view/api_provider.dart';
 import 'package:ticketbook/ui/color.dart';
 import 'package:ticketbook/ui/mediaquery.dart';
 import 'package:ticketbook/ui/text_styl_ui.dart';
+import 'package:ticketbook/view/allticket_view.dart';
 import 'package:ticketbook/view/seat_view.dart';
 
 class DetailFlight extends StatefulWidget {
@@ -18,6 +20,12 @@ class DetailFlight extends StatefulWidget {
 
 class _DetailFlightState extends State<DetailFlight> {
   // This should be your payment link or any URL you want to launch.
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<ApiProvider>(context, listen: false).seatSelect = 1;
+    Provider.of<ApiProvider>(context, listen: false).total = 0;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -228,41 +236,42 @@ class _DetailFlightState extends State<DetailFlight> {
                 showDialog(
                   context: context,
                   builder: (context) {
-                    return Dialog(
-                      insetPadding: const EdgeInsets.symmetric(
-                          horizontal: 0, vertical: 200),
-                      child: Container(
-                        margin: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 10),
-                        color: Colors.white,
-                        width: double.infinity,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Spacer(),
-                            Text(
-                              "Select Seat",
-                              style: TextStylUi.simple01(),
-                            ),
-                            const Spacer(),
-                            Align(
-                              alignment: Alignment.center,
-                              child: SizedBox(
-                                height: 40,
-                                width: double.infinity,
-                                child: ListView.builder(
+                    return Consumer<ApiProvider>(builder: (context, color, _) {
+                      return Dialog(
+                        insetPadding: const EdgeInsets.symmetric(
+                            horizontal: 0, vertical: 270),
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 10),
+                          color: Colors.white,
+                          width: double.infinity,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Spacer(),
+                              Text(
+                                "Select Seat",
+                                style: TextStylUi.simple01(),
+                              ),
+                              const Spacer(),
+                              Align(
+                                alignment: Alignment.center,
+                                child: SizedBox(
+                                  height: 40,
+                                  width: double.infinity,
+                                  child: ListView.builder(
                                     physics:
                                         const NeverScrollableScrollPhysics(),
                                     scrollDirection: Axis.horizontal,
                                     shrinkWrap: true,
-                                    itemCount: 10,
+                                    itemCount: color.seatColor.length,
                                     itemBuilder: (context, index) {
                                       return GestureDetector(
                                         onTap: () {
                                           apiprovider.changeSeat(index + 1);
                                         },
                                         child: Container(
-                                          color: Colors.amber,
+                                          color: color.seatColor[index],
                                           padding: const EdgeInsets.symmetric(
                                               vertical: 11, horizontal: 13.5),
                                           margin: const EdgeInsets.symmetric(
@@ -275,36 +284,48 @@ class _DetailFlightState extends State<DetailFlight> {
                                           ),
                                         ),
                                       );
-                                    }),
-                              ),
-                            ),
-                            const Spacer(),
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) => const SeatView(),
+                                    },
                                   ),
-                                );
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(4),
-                                  color: Colors.blue,
-                                ),
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 40, vertical: 10),
-                                child: Text(
-                                  "Next",
-                                  style: TextStylUi.simple01W(),
                                 ),
                               ),
-                            ),
-                            const Spacer(),
-                          ],
+                              const Spacer(),
+                              GestureDetector(
+                                onTap: () {
+                                  if (kDebugMode) {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const AllticketView(),
+                                      ),
+                                    );
+                                  }
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => SeatView(
+                                        count: widget.index,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(4),
+                                    color: Colors.blue,
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 40, vertical: 10),
+                                  child: Text(
+                                    "Next",
+                                    style: TextStylUi.simple01W(),
+                                  ),
+                                ),
+                              ),
+                              const Spacer(),
+                            ],
+                          ),
                         ),
-                      ),
-                    );
+                      );
+                    });
                   },
                 );
               },

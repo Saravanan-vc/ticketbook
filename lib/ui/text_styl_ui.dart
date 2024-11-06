@@ -16,6 +16,12 @@ class TextStylUi {
         fontSize: 18.sp,
         fontWeight: FontWeight.w600,);
   }
+  static TextStyle simple002() {
+    return TextStyle(
+        color: ColorClass.palBlack,
+        fontSize: 16.sp,
+        fontWeight: FontWeight.w600,);
+  }
   static TextStyle simple01W() {
     return TextStyle(
         color: ColorClass.palWhite,

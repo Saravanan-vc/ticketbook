@@ -10,11 +10,14 @@ class ApiProvider extends ChangeNotifier {
   List<FlightClass> flightlist = [];
   List<FlightClass>? flightfist = [];
   String apiUrl = "https://saravanan-vc.github.io/flight-api/flightofall";
+  String apiUrl1 = "https://saravanan-vc.github.io/flight-api/50unqieFlight";
   int seatSelect = 1;
   List<String> selectedSeat = [];
+  int total = 0;
+  int index = 0;
 
   void gettinData() async {
-    var convert = Uri.parse(apiUrl);
+    var convert = Uri.parse(apiUrl1);
     var rawApi = await http.get(convert);
     var decodeApi = json.decode(rawApi.body) as List;
     if (rawApi.statusCode == 200) {
@@ -73,6 +76,9 @@ class ApiProvider extends ChangeNotifier {
       await launchUrl(url);
     });
   }
+
+  List<Color> seatColor = List.filled(10, Colors.grey.shade300 );
+
   //changinig seat
 
   void changeSeat(int seat) {
@@ -81,20 +87,49 @@ class ApiProvider extends ChangeNotifier {
   }
 
   void selectedAdd(String a) {
-    if (selectedSeat.length < seatSelect) {
-      if (selectedSeat.isNotEmpty) {
-        for (int q = 0; q < selectedSeat.length; q++) {
-          if (selectedSeat[q] == a) {
-            selectedSeat.removeAt(q);
-            debugPrint("$selectedSeat");
-            notifyListeners();
-            break;
-          }
-        }
-      }
-      selectedSeat.add(a);
+    if (selectedSeat.contains(a)) {
+      selectedSeat.remove(a);
       notifyListeners();
+    } else if (selectedSeat.length < seatSelect) {
+      if (selectedSeat.isEmpty) {
+        selectedSeat.add(a);
+        notifyListeners();
+      } else {
+        if (selectedSeat.contains(a)) {
+          selectedSeat.remove(a);
+        } else {
+          selectedSeat.add(a);
+        }
+        notifyListeners();
+      }
+
       debugPrint("$selectedSeat");
     }
+  }
+
+  void checkit(int e, int b) {
+    for (int c = 0; c < selectedSeat.length; c++) {
+      if (selectedSeat[c][0] == "B") {
+        debugPrint(selectedSeat[c][0]);
+        total = total + b;
+        notifyListeners();
+      } else {
+        total = total + e;
+        notifyListeners();
+      }
+    }
+    notifyListeners();
+    debugPrint("$total");
+  }
+
+  //make zero
+  void makezero() {
+    total = 0;
+    notifyListeners();
+  }
+
+  void forindeX(int currentIndex) {
+    index = currentIndex;
+    notifyListeners();
   }
 }

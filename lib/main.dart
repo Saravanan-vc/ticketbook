@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ticketbook/model_view/api_provider.dart';
 import 'package:ticketbook/model_view/login_provider.dart';
+import 'package:ticketbook/model_view/payed_provider.dart';
 import 'package:ticketbook/ui/color.dart';
 import 'package:ticketbook/view/home_view.dart';
 import 'package:ticketbook/view/login_screen.dart';
@@ -19,7 +20,8 @@ Future<void> main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => AuthenProvider()),
-        ChangeNotifierProvider(create: (context) => ApiProvider())
+        ChangeNotifierProvider(create: (context) => ApiProvider()),
+        ChangeNotifierProvider(create: (context) => PayedProvider())
       ],
       child: const MyApp(),
     ),
