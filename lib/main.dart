@@ -92,7 +92,7 @@ class _SplashScreenState extends State<SplashScreen> {
 }
 
 //changes
-
+//second time changing
 /* 
 android   1:241846213505:android:eb63ff46ecc644c7f22680
 ios       1:241846213505:ios:8c8dd6c08022020df22680
